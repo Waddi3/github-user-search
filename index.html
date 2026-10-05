@@ -4,12 +4,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search a GitHub user and browse their public repositories.">
     <title>GitHub User Search</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <h1>GitHub User Search</h1>
+    <header class="site-header">
+        <h1>GitHub User Search</h1>
+        <p>Look up a public GitHub profile and browse its repositories.</p>
+    </header>
+
+    <main>
+        <!-- Search form: submit fires on button click AND on Enter -->
+        <form id="search-form" class="search-form" role="search" novalidate>
+            <label for="username-input" class="search-form__label">GitHub username</label>
+            <div class="search-form__row">
+                <input id="username-input" name="username" type="search" placeholder="Search GitHub username..."
+                    autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="username-error">
+                <button id="search-button" type="submit">Search</button>
+            </div>
+            <p id="username-error" class="field-error" hidden></p>
+        </form>
+
+        <!-- Live region: loading and error messages are announced here -->
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+
+        <!-- Profile: filled by JavaScript after a successful search -->
+        <section id="profile" class="profile" aria-labelledby="profile-name" hidden>
+            <!-- The avatar <img> is created by JavaScript, because src and alt exist only after the data arrives -->
+            <div id="profile-avatar" class="profile__avatar"></div>
+
+            <div class="profile__identity">
+                <h2 id="profile-name" class="profile__name"></h2>
+                <p><a id="profile-link" class="profile__login" target="_blank" rel="noopener noreferrer"></a></p>
+                <p id="profile-bio" class="profile__bio"></p>
+            </div>
+
+            <dl class="profile__stats">
+                <div>
+                    <dt>Followers</dt>
+                    <dd id="profile-followers"></dd>
+                </div>
+                <div>
+                    <dt>Following</dt>
+                    <dd id="profile-following"></dd>
+                </div>
+                <div>
+                    <dt>Repositories</dt>
+                    <dd id="profile-repos"></dd>
+                </div>
+            </dl>
+
+            <ul class="profile__meta">
+                <li id="profile-location" hidden></li>
+                <li id="profile-company" hidden></li>
+                <li id="profile-website" hidden>
+                    <a target="_blank" rel="noopener noreferrer"></a>
+                </li>
+                <li id="profile-joined"></li>
+            </ul>
+        </section>
+
+        <!-- Repositories: list items are created by JavaScript in Phase 9 -->
+        <section id="repositories" class="repositories" aria-labelledby="repositories-heading" hidden>
+            <h2 id="repositories-heading">Repositories</h2>
+            <ul id="repository-list" class="repository-list"></ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>
+            Data from the
+            <a href="https://docs.github.com/en/rest" target="_blank" rel="noopener noreferrer">GitHub REST API</a>.
+        </p>
+    </footer>
 
     <script type="module" src="js/main.js"></script>
 </body>
