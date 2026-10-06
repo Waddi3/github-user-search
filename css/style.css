@@ -120,3 +120,114 @@ main {
 main>*+* {
     margin-top: var(--space-5);
 }
+
+/* ==========================================================================
+   4. Header
+   ========================================================================== */
+.site-header {
+    padding-block: var(--space-6) var(--space-5);
+    margin-bottom: var(--space-5);
+    border-bottom: 3px double var(--color-ink);
+}
+
+.site-header h1 {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+}
+
+.site-header p {
+    max-width: 40ch;
+    margin-top: var(--space-2);
+    color: var(--color-ink-muted);
+}
+
+/* ==========================================================================
+   5. Search form
+   ========================================================================== */
+.search-form__label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+}
+
+/* Input and button are joined into one bar */
+.search-form__row {
+    display: flex;
+}
+
+.search-form input {
+    flex: 1;
+    min-width: 0;
+    /* lets the input shrink inside a flex row */
+    padding: var(--space-3) var(--space-4);
+    font: inherit;
+    font-family: var(--font-mono);
+    color: inherit;
+    background: var(--color-surface);
+    border: 1px solid var(--color-ink);
+    border-right: 0;
+    border-radius: var(--radius) 0 0 var(--radius);
+    appearance: none;
+}
+
+.search-form input::placeholder {
+    color: var(--color-ink-muted);
+    opacity: 1;
+}
+
+.search-form button {
+    padding: var(--space-3) var(--space-5);
+    font: inherit;
+    font-weight: 600;
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+}
+
+.search-form button:active {
+    transform: translateY(1px);
+}
+
+.search-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Only animate when the user has not asked for reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+    .search-form button {
+        transition: background-color 120ms ease, border-color 120ms ease;
+    }
+}
+
+.field-error {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent);
+}
+
+/* ==========================================================================
+   6. Status line (loading and error messages)
+   ========================================================================== */
+.status {
+    min-height: 1.5em;
+    /* reserve space so the page does not jump when text appears */
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+}
