@@ -231,3 +231,127 @@ main>*+* {
     font-size: var(--text-sm);
     color: var(--color-ink-muted);
 }
+
+/* ==========================================================================
+   7. Profile card
+   ========================================================================== */
+.profile {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius);
+}
+
+/* The <img> is created by JavaScript inside this container */
+.profile__avatar img {
+    display: block;
+    width: 6rem;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius);
+}
+
+.profile__name {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    /* very long names must not break the layout */
+}
+
+.profile__login {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+}
+
+.profile__bio {
+    max-width: 60ch;
+    margin-top: var(--space-3);
+}
+
+/* Stats: columns are created automatically, no media query needed */
+.profile__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+    border-block: var(--border);
+}
+
+.profile__stats>div {
+    padding-block: var(--space-3);
+}
+
+.profile__stats dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+}
+
+.profile__stats dd {
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.profile__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+}
+
+/* Tablet and up: avatar on the left, everything else in the right column */
+@media (min-width: 40rem) {
+    .profile {
+        grid-template-columns: 8rem 1fr;
+        column-gap: var(--space-6);
+    }
+
+    .profile__avatar img {
+        width: 100%;
+    }
+
+    .profile__stats,
+    .profile__meta {
+        grid-column: 2;
+    }
+}
+
+/* ==========================================================================
+   8. Repositories section (list items are styled in Phase 9)
+   ========================================================================== */
+.repositories h2 {
+    padding-bottom: var(--space-2);
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    border-bottom: 2px solid var(--color-ink);
+}
+
+.repository-list {
+    padding: 0;
+    list-style: none;
+}
+
+.repository-list>li {
+    padding-block: var(--space-4);
+    border-bottom: var(--border);
+}
+
+/* ==========================================================================
+   9. Footer
+   ========================================================================== */
+.site-footer {
+    margin-top: var(--space-7);
+    padding-block: var(--space-5);
+    border-top: var(--border);
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+}
