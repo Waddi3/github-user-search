@@ -17,6 +17,7 @@ function getRequiredElement(id) {
 
 // Looked up once, when this module is first loaded, then reused.
 const elements = {
+  form: getRequiredElement("search-form"),
   input: getRequiredElement("username-input"),
   fieldError: getRequiredElement("username-error"),
   status: getRequiredElement("status"),
@@ -38,6 +39,7 @@ export function showFieldError(message) {
   elements.fieldError.textContent = message;
   elements.fieldError.hidden = false;
   elements.input.setAttribute("aria-invalid", "true");
+  elements.input.focus(); // move the cursor back to the field that needs fixing
 }
 
 /**
@@ -62,5 +64,16 @@ export function setOptionalText(element, value) {
     element.textContent = "";
     element.hidden = true;
   }
+}
+
+/**
+ * Calls `handler` with the raw input text whenever the search form is submitted.
+ * @param {(rawValue: string) => void} handler
+ */
+export function onSearchSubmit(handler) {
+  elements.form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    handler(elements.input.value);
+  });
 }
  
