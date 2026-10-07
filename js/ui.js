@@ -48,3 +48,19 @@ export function clearFieldError() {
   elements.fieldError.hidden = true;
   elements.input.removeAttribute("aria-invalid");
 }
+
+/**
+ * hide the element when there is nothing meaningful to show.
+ */
+export function setOptionalText(element, value) {
+  const cleaned = value?.trim();
+
+  if (cleaned) {
+    element.textContent = cleaned;
+    element.hidden = false;
+  } else {
+    element.textContent = "";
+    element.hidden = true;
+  }
+}
+ 
