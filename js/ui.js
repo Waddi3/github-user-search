@@ -68,8 +68,8 @@ export function setOptionalText(element, value) {
 
 /**
  * Calls `handler` with the raw input text whenever the search form is submitted.
- * @param {(rawValue: string) => void} handler
- */
+ * @param {(rawValue: string) => void | Promise<void>} handler
+*/
 export function onSearchSubmit(handler) {
   elements.form.addEventListener("submit", (event) => {
     event.preventDefault();
