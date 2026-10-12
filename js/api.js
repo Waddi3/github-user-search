@@ -59,38 +59,41 @@ export function describeHttpError({ status, rateLimitRemaining, rateLimitReset, 
  * @param {string} username - already trimmed and non-empty
  * @returns {Promise<object>} fulfills with the user object, rejects with an Error
  */
-export function getUser(username) {
+export async function getUser(username) {
   const url = `${API_BASE_URL}/users/${encodeURIComponent(username)}`;
 
-  return fetch(url, { headers: { Accept: "application/vnd.github+json" } })
-    .catch(() => {
-      // fetch rejected: no response arrived at all
-      throw new Error(NETWORK_ERROR_MESSAGE);
-    })
-    .then((response) => {
-      if (!response.ok) {
-        // A response arrived, but with an error status
-        throw new Error(
-          describeHttpError({
-            status: response.status,
-            rateLimitRemaining: response.headers.get("x-ratelimit-remaining"),
-            rateLimitReset: response.headers.get("x-ratelimit-reset"),
-            username,
-          })
-        );
-      }
+  let response;
+  try {
+    response = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
+  } catch {
+    // fetch rejected: no response arrived at all
+    throw new Error(NETWORK_ERROR_MESSAGE);
+  }
 
-      return response.json().catch(() => {
-        // The body is not valid JSON
-        throw new Error(UNREADABLE_RESPONSE_MESSAGE);
-      });
-    })
-    .then((user) => {
-      // Valid JSON, but is it what we expect?
-      if (typeof user?.login !== "string") {
-        throw new Error(UNREADABLE_RESPONSE_MESSAGE);
-      }
+  if (!response.ok) {
+    // A response arrived, but with an error status
+    throw new Error(
+      describeHttpError({
+        status: response.status,
+        rateLimitRemaining: response.headers.get("x-ratelimit-remaining"),
+        rateLimitReset: response.headers.get("x-ratelimit-reset"),
+        username,
+      })
+    );
+  }
 
-      return user;
-    });
+  let user;
+  try {
+    user = await response.json();
+  } catch {
+    // The body is not valid JSON
+    throw new Error(UNREADABLE_RESPONSE_MESSAGE);
+  }
+
+  // Valid JSON, but is it what we expect?
+  if (typeof user?.login !== "string") {
+    throw new Error(UNREADABLE_RESPONSE_MESSAGE);
+  }
+
+  return user;
 }
