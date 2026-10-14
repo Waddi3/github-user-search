@@ -1,5 +1,5 @@
 // UI layer: the only module that touches the DOM.
-
+import { formatJoinDate, formatNumber, toSafeWebsiteUrl } from "./utils.js";
 /**
  * Finds an element by id, or fails immediately with a clear message.
  * @param {string} id
@@ -21,6 +21,18 @@ const elements = {
   input: getRequiredElement("username-input"),
   fieldError: getRequiredElement("username-error"),
   status: getRequiredElement("status"),
+  profile: getRequiredElement("profile"),
+  avatar: getRequiredElement("profile-avatar"),
+  name: getRequiredElement("profile-name"),
+  link: getRequiredElement("profile-link"),
+  bio: getRequiredElement("profile-bio"),
+  followers: getRequiredElement("profile-followers"),
+  following: getRequiredElement("profile-following"),
+  repos: getRequiredElement("profile-repos"),
+  location: getRequiredElement("profile-location"),
+  company: getRequiredElement("profile-company"),
+  website: getRequiredElement("profile-website"),
+  joined: getRequiredElement("profile-joined"),
 };
 
 /**
@@ -67,6 +79,52 @@ export function setOptionalText(element, value) {
 }
 
 /**
+ * Fills the profile card with the data of one GitHub user and shows it.
+ * @param {object} user - the object returned by getUser
+ */
+export function renderProfile(user) {
+  const avatar = document.createElement("img");
+  avatar.src = user.avatar_url;
+  avatar.alt = `${user.login}'s avatar`;
+  elements.avatar.replaceChildren(avatar);
+
+  elements.name.textContent = user.name || user.login;
+  elements.link.textContent = `@${user.login}`;
+  elements.link.href = user.html_url;
+  setOptionalText(elements.bio, user.bio);
+
+  elements.followers.textContent = formatNumber(user.followers);
+  elements.following.textContent = formatNumber(user.following);
+  elements.repos.textContent = formatNumber(user.public_repos);
+
+  setOptionalText(elements.location, user.location);
+  setOptionalText(elements.company, user.company);
+
+  const websiteUrl = toSafeWebsiteUrl(user.blog);
+  const websiteLink = elements.website.querySelector("a");
+  if (websiteUrl) {
+    websiteLink.href = websiteUrl;
+    websiteLink.textContent = websiteUrl;
+    elements.website.hidden = false;
+  } else {
+    elements.website.hidden = true;
+  }
+
+  const joinDate = formatJoinDate(user.created_at);
+  setOptionalText(elements.joined, joinDate ? `Joined ${joinDate}` : null);
+
+  elements.profile.hidden = false;
+}
+
+/**
+ * Hides the profile card.
+ */
+export function hideProfile() {
+  elements.profile.hidden = true;
+}
+ 
+
+/**
  * Calls `handler` with the raw input text whenever the search form is submitted.
  * @param {(rawValue: string) => void | Promise<void>} handler
 */
@@ -76,4 +134,4 @@ export function onSearchSubmit(handler) {
     handler(elements.input.value);
   });
 }
- 
+
