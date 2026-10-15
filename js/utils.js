@@ -89,3 +89,15 @@ export function getRepositoriesNote(shownCount, totalCount) {
 
   return null ;
 }
+
+export function filterRepositories(repos, query) {
+  const needle = query.trim().toLowerCase();           // step 1
+
+  if (!needle) {                    // step 2
+    return repos;
+  }
+
+  return repos.filter((repo) =>
+    [repo.name, repo.description, repo.language].some((field) => field?.toLowerCase().includes(needle))   // step 3
+  );
+}
