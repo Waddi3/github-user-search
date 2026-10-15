@@ -1,6 +1,10 @@
 // UI layer: the only module that touches the DOM.
-import { formatDate, formatNumber, toSafeWebsiteUrl } from "./utils.js";
-/**
+import {
+  formatDate,
+  formatNumber,
+  getRepositoriesNote,
+  toSafeWebsiteUrl,
+} from "./utils.js";/**
  * Finds an element by id, or fails immediately with a clear message.
  * @param {string} id
  * @returns {HTMLElement}
@@ -33,6 +37,10 @@ const elements = {
   company: getRequiredElement("profile-company"),
   website: getRequiredElement("profile-website"),
   joined: getRequiredElement("profile-joined"),
+  repositories: getRequiredElement("repositories"),
+  repositoriesNote: getRequiredElement("repositories-note"),
+  repositoryList: getRequiredElement("repository-list"),
+  repositoryTemplate: getRequiredElement("repository-template"),
 };
 
 /**
@@ -119,10 +127,58 @@ export function renderProfile(user) {
 /**
  * Hides the profile card.
  */
-export function hideProfile() {
+export function hideResults() {
   elements.profile.hidden = true;
+  elements.repositories.hidden = true;
+
 }
  
+/**
+ * Builds one repository row from the HTML template.
+ * @param {object} repo
+ * @returns {DocumentFragment}
+ */
+function createRepositoryItem(repo) {
+  const row = elements.repositoryTemplate.content.cloneNode(true);
+
+  const link = row.querySelector(".repo__name a");
+  link.textContent = repo.name;
+  link.href = repo.html_url;
+
+  setOptionalText(row.querySelector(".repo__description"), repo.description);
+  setOptionalText(row.querySelector(".repo__language"), repo.language);
+
+  row.querySelector(".repo__stars").textContent = `Stars: ${formatNumber(repo.stargazers_count)}`;
+  row.querySelector(".repo__forks").textContent = `Forks: ${formatNumber(repo.forks_count)}`;
+
+  const updated = formatDate(repo.updated_at);
+  setOptionalText(row.querySelector(".repo__updated"), updated ? `Updated: ${updated}` : null);
+
+  return row;
+}
+
+/**
+ * Shows the repository list and the note above it.
+ * @param {object[]} repos
+ * @param {number | undefined} totalCount - public repository count reported by GitHub
+ */
+export function renderRepositories(repos, totalCount) {
+  const rows = repos.map(createRepositoryItem);
+  elements.repositoryList.replaceChildren(...rows);
+
+  setOptionalText(elements.repositoriesNote, getRepositoriesNote(repos.length, totalCount));
+  elements.repositories.hidden = false;
+}
+
+/**
+ * Shows a message instead of the repository list.
+ * @param {string} message
+ */
+export function showRepositoriesMessage(message) {
+  elements.repositoryList.replaceChildren();
+  setOptionalText(elements.repositoriesNote, message);
+  elements.repositories.hidden = false;
+}
 
 /**
  * Calls `handler` with the raw input text whenever the search form is submitted.
