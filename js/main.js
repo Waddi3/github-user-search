@@ -1,22 +1,58 @@
-import { APP_NAME, validateUsername } from "./utils.js";
 import {
-  onSearchSubmit,
-  setStatus,
-  showFieldError,
+  APP_NAME,
+  filterRepositories,
+  getRepositoriesNote,
+  getRepositoriesSummary,
+  sortRepositories,
+  sumStars,
+  validateUsername,
+} from "./utils.js";
+import {
   clearFieldError,
+  hideResults,
+  onRepositoryControlsChange,
+  onSearchSubmit,
+  readRepositoryControls,
   renderProfile,
   renderRepositories,
+  resetRepositoryControls,
+  setStatus,
+  showFieldError,
   showRepositoriesMessage,
-  hideResults,
 } from "./ui.js";
-import { getUser, getRepos } from "./api.js";
+import { getRepos, getUser } from "./api.js";
 
 console.log(`${APP_NAME}: main.js loaded`);
+
+// State: the data behind the repository list
+let allRepos = [];
+let publicRepoCount; // the total GitHub reports (user.public_repos)
+
+/**
+ * Recomputes what the repository list shows from the state and the controls.
+ * @param {{ query: string, sortKey: string }} controls
+ */
+function refreshRepositories({ query, sortKey }) {
+  const visibleRepos = sortRepositories(filterRepositories(allRepos, query), sortKey);
+  const showControls = allRepos.length > 1; // nothing to filter or sort with 0 or 1 repository
+
+  renderRepositories({
+    repos: visibleRepos,
+    summary: showControls
+      ? getRepositoriesSummary(visibleRepos.length, allRepos.length, sumStars(visibleRepos))
+      : "",
+    note: getRepositoriesNote(allRepos.length, publicRepoCount),
+    showControls,
+  });
+}
+
+onRepositoryControlsChange(refreshRepositories);
 
 onSearchSubmit(async (rawValue) => {
   clearFieldError();
   setStatus("");
   hideResults();
+  allRepos = [];
 
   const { isValid, username, error: validationError } = validateUsername(rawValue);
 
@@ -42,9 +78,13 @@ onSearchSubmit(async (rawValue) => {
   renderProfile(user);
   setStatus(`Showing profile for ${user.login}`);
 
-  if (reposOutcome.status === "fulfilled") {
-    renderRepositories(reposOutcome.value, user.public_repos);
-  } else {
+  if (reposOutcome.status === "rejected") {
     showRepositoriesMessage(reposOutcome.reason.message);
+    return;
   }
+
+  allRepos = reposOutcome.value;
+  publicRepoCount = user.public_repos;
+  resetRepositoryControls();
+  refreshRepositories(readRepositoryControls());
 });

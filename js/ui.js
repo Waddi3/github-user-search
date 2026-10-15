@@ -1,10 +1,6 @@
 // UI layer: the only module that touches the DOM.
-import {
-  formatDate,
-  formatNumber,
-  getRepositoriesNote,
-  toSafeWebsiteUrl,
-} from "./utils.js";/**
+import { formatDate, formatNumber, SORT_OPTIONS, toSafeWebsiteUrl } from "./utils.js";
+/**
  * Finds an element by id, or fails immediately with a clear message.
  * @param {string} id
  * @returns {HTMLElement}
@@ -41,7 +37,16 @@ const elements = {
   repositoriesNote: getRequiredElement("repositories-note"),
   repositoryList: getRequiredElement("repository-list"),
   repositoryTemplate: getRequiredElement("repository-template"),
+  repositoryControls: getRequiredElement("repository-controls"),
+  repositoryFilter: getRequiredElement("repository-filter"),
+  repositorySort: getRequiredElement("repository-sort"),
+  repositoriesSummary: getRequiredElement("repositories-summary"),
 };
+
+// The sort choices are built from the data, so labels and keys live in one place
+elements.repositorySort.replaceChildren(
+  ...SORT_OPTIONS.map((option) => new Option(option.label, option.key))
+);
 
 /**
  * Writes a message into the status live region. Pass "" to clear it.
@@ -158,15 +163,50 @@ function createRepositoryItem(repo) {
 }
 
 /**
- * Shows the repository list and the note above it.
- * @param {object[]} repos
- * @param {number | undefined} totalCount - public repository count reported by GitHub
+ * Reads the current state of the repository controls.
+ * @returns {{ query: string, sortKey: string }}
  */
-export function renderRepositories(repos, totalCount) {
+export function readRepositoryControls() {
+  return {
+    query: elements.repositoryFilter.value,
+    sortKey: elements.repositorySort.value,
+  };
+}
+
+/**
+ * Clears the filter and selects the default sort.
+ */
+export function resetRepositoryControls() {
+  elements.repositoryFilter.value = "";
+  elements.repositorySort.value = SORT_OPTIONS[0].key;
+}
+
+/**
+ * Calls `handler` with the current controls whenever the filter or sort changes.
+ * @param {(controls: { query: string, sortKey: string }) => void} handler
+ */
+export function onRepositoryControlsChange(handler) {
+  const notify = () => handler(readRepositoryControls());
+
+  elements.repositoryFilter.addEventListener("input", notify);
+  elements.repositorySort.addEventListener("change", notify);
+}
+
+/**
+ * Shows a list of repositories with its summary and note.
+ * @param {object} options
+ * @param {object[]} options.repos - repositories to display
+ * @param {string} options.summary - one-line description of the list ("" for none)
+ * @param {string | null} options.note - extra note above the list, or null
+ * @param {boolean} options.showControls - show the filter and sort controls
+ */
+export function renderRepositories({ repos, summary, note, showControls }) {
   const rows = repos.map(createRepositoryItem);
   elements.repositoryList.replaceChildren(...rows);
 
-  setOptionalText(elements.repositoriesNote, getRepositoriesNote(repos.length, totalCount));
+  elements.repositoriesSummary.textContent = summary;
+  setOptionalText(elements.repositoriesNote, note);
+  elements.repositoryControls.hidden = !showControls;
   elements.repositories.hidden = false;
 }
 
@@ -176,6 +216,8 @@ export function renderRepositories(repos, totalCount) {
  */
 export function showRepositoriesMessage(message) {
   elements.repositoryList.replaceChildren();
+  elements.repositoriesSummary.textContent = "";
+  elements.repositoryControls.hidden = true;
   setOptionalText(elements.repositoriesNote, message);
   elements.repositories.hidden = false;
 }
