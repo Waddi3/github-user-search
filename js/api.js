@@ -55,13 +55,12 @@ export function describeHttpError({ status, rateLimitRemaining, rateLimitReset, 
 }
 
 /**
- * Fetches the public profile of one GitHub user.
- * @param {string} username - already trimmed and non-empty
- * @returns {Promise<object>} fulfills with the user object, rejects with an Error
+ * Sends a GET request to the GitHub API and returns the parsed JSON body.
+ * @param {string} url
+ * @param {string} username - used only for the "user not found" message
+ * @returns {Promise<unknown>}
  */
-export async function getUser(username) {
-  const url = `${API_BASE_URL}/users/${encodeURIComponent(username)}`;
-
+async function fetchJson(url, username) {
   let response;
   try {
     response = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
@@ -82,13 +81,22 @@ export async function getUser(username) {
     );
   }
 
-  let user;
   try {
-    user = await response.json();
+    return await response.json();
   } catch {
     // The body is not valid JSON
     throw new Error(UNREADABLE_RESPONSE_MESSAGE);
   }
+}
+
+/**
+ * Fetches the public profile of one GitHub user.
+ * @param {string} username - already trimmed and non-empty
+ * @returns {Promise<object>} fulfills with the user object, rejects with an Error
+ */
+export async function getUser(username) {
+  const url = `${API_BASE_URL}/users/${encodeURIComponent(username)}`;
+  const user = await fetchJson(url, username);
 
   // Valid JSON, but is it what we expect?
   if (typeof user?.login !== "string") {
