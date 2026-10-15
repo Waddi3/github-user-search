@@ -59,7 +59,7 @@ export function formatNumber(value) {
  * @param {string | null | undefined} isoString
  * @returns {string | null}
  */
-export function formatJoinDate(isoString) {
+export function formatDate(isoString) {
   if (!isoString) {
     return null;
   }
@@ -76,4 +76,16 @@ export function formatJoinDate(isoString) {
     day: "numeric",
     timeZone: "UTC",
   });
+}
+
+export function getRepositoriesNote(shownCount, totalCount) {
+  if (shownCount === 0) {
+    return "This user has no public repositories.";
+  }
+
+  if (totalCount > shownCount) {
+    return `Showing ${formatNumber(shownCount)} of ${formatNumber(totalCount)} repositories.`;
+  }
+
+  return null ;
 }

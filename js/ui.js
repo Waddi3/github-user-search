@@ -1,5 +1,5 @@
 // UI layer: the only module that touches the DOM.
-import { formatJoinDate, formatNumber, toSafeWebsiteUrl } from "./utils.js";
+import { formatDate, formatNumber, toSafeWebsiteUrl } from "./utils.js";
 /**
  * Finds an element by id, or fails immediately with a clear message.
  * @param {string} id
@@ -110,7 +110,7 @@ export function renderProfile(user) {
     elements.website.hidden = true;
   }
 
-  const joinDate = formatJoinDate(user.created_at);
+  const joinDate = formatDate(user.created_at);
   setOptionalText(elements.joined, joinDate ? `Joined ${joinDate}` : null);
 
   elements.profile.hidden = false;
