@@ -345,6 +345,35 @@ main>*+* {
     border-bottom: var(--border);
 }
 
+.repositories__note {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+}
+
+.repo__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    overflow-wrap: anywhere;
+}
+
+.repo__description {
+    max-width: 60ch;
+    margin-top: var(--space-1);
+}
+
+.repo__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-top: var(--space-2);
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-ink-muted);
+}
+
 /* ==========================================================================
    9. Footer
    ========================================================================== */

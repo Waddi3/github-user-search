@@ -69,6 +69,7 @@
         <!-- Repositories: list items are created by JavaScript in Phase 9 -->
         <section id="repositories" class="repositories" aria-labelledby="repositories-heading" hidden>
             <h2 id="repositories-heading">Repositories</h2>
+            <p id="repositories-note" class="repositories__note" hidden></p>
             <ul id="repository-list" class="repository-list"></ul>
         </section>
     </main>
@@ -79,7 +80,19 @@
             <a href="https://docs.github.com/en/rest" target="_blank" rel="noopener noreferrer">GitHub REST API</a>.
         </p>
     </footer>
-
+    <!-- Template for one repository row: cloned and filled by JavaScript -->
+    <template id="repository-template">
+        <li class="repo">
+            <h3 class="repo__name"><a target="_blank" rel="noopener noreferrer"></a></h3>
+            <p class="repo__description"></p>
+            <ul class="repo__meta">
+                <li class="repo__language"></li>
+                <li class="repo__stars"></li>
+                <li class="repo__forks"></li>
+                <li class="repo__updated"></li>
+            </ul>
+        </li>
+    </template>
     <script type="module" src="js/main.js"></script>
 </body>
 
