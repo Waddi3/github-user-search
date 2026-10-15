@@ -5,16 +5,18 @@ import {
   showFieldError,
   clearFieldError,
   renderProfile,
-  hideProfile,
+  renderRepositories,
+  showRepositoriesMessage,
+  hideResults,
 } from "./ui.js";
-import { getUser } from "./api.js";
+import { getUser, getRepos } from "./api.js";
 
 console.log(`${APP_NAME}: main.js loaded`);
 
 onSearchSubmit(async (rawValue) => {
   clearFieldError();
   setStatus("");
-  hideProfile();
+  hideResults();
 
   const { isValid, username, error: validationError } = validateUsername(rawValue);
 
@@ -25,11 +27,24 @@ onSearchSubmit(async (rawValue) => {
 
   setStatus(`Searching GitHub for "${username}"...`);
 
-  try {
-    const user = await getUser(username);
-    renderProfile(user);
-    setStatus(`Showing profile for ${user.login}`);
-  } catch (error) {
-    setStatus(error.message);
+  // Both requests start now and run in parallel; allSettled never rejects
+  const [userOutcome, reposOutcome] = await Promise.allSettled([
+    getUser(username),
+    getRepos(username),
+  ]);
+
+  if (userOutcome.status === "rejected") {
+    setStatus(userOutcome.reason.message);
+    return;
+  }
+
+  const user = userOutcome.value;
+  renderProfile(user);
+  setStatus(`Showing profile for ${user.login}`);
+
+  if (reposOutcome.status === "fulfilled") {
+    renderRepositories(reposOutcome.value, user.public_repos);
+  } else {
+    showRepositoriesMessage(reposOutcome.reason.message);
   }
 });
