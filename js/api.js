@@ -105,3 +105,22 @@ export async function getUser(username) {
 
   return user;
 }
+
+/**
+ * Fetches the first 100 public repositories of a user (most recently updated first).
+ * @param {string} username - already trimmed and non-empty
+ * @returns {Promise<object[]>}
+ */
+export async function getRepos(username) {
+  const url = `${API_BASE_URL}/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`;
+  const repos = await fetchJson(url, username);
+
+  const hasExpectedShape =
+    Array.isArray(repos) && repos.every((repo) => typeof repo?.name === "string");
+
+  if (!hasExpectedShape) {
+    throw new Error(UNREADABLE_RESPONSE_MESSAGE);
+  }
+
+  return repos;
+}
