@@ -70,6 +70,18 @@
         <section id="repositories" class="repositories" aria-labelledby="repositories-heading" hidden>
             <h2 id="repositories-heading">Repositories</h2>
             <p id="repositories-note" class="repositories__note" hidden></p>
+            <div id="repository-controls" class="repo-controls" hidden>
+                <div class="repo-controls__field">
+                    <label for="repository-filter">Filter</label>
+                    <input id="repository-filter" type="search" placeholder="Name, description or language" autocomplete="off"
+                        spellcheck="false">
+                </div>
+                <div class="repo-controls__field">
+                    <label for="repository-sort">Sort by</label>
+                    <select id="repository-sort"></select>
+                </div>
+            </div>
+            <p id="repositories-summary" class="repositories__summary" role="status"></p>
             <ul id="repository-list" class="repository-list"></ul>
         </section>
     </main>
