@@ -233,3 +233,14 @@ export function onSearchSubmit(handler) {
   });
 }
 
+/**
+ * Switches the page between the idle and the loading state.
+ * @param {boolean} isLoading
+ */
+export function setLoading(isLoading) {
+  if (isLoading) {
+    elements.form.setAttribute("aria-busy", "true");
+  } else {
+    elements.form.removeAttribute("aria-busy");
+  }
+}
