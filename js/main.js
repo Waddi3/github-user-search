@@ -48,7 +48,11 @@ function refreshRepositories({ query, sortKey }) {
 
 onRepositoryControlsChange(refreshRepositories);
 
-onSearchSubmit(async (rawValue) => {
+/**
+ * Runs one search: validates the input, loads the data and renders it.
+ * @param {string} rawValue - exactly what the user typed
+ */
+async function handleSearch(rawValue) {
   clearFieldError();
   setStatus("");
   hideResults();
@@ -61,30 +65,38 @@ onSearchSubmit(async (rawValue) => {
     return;
   }
 
+  setLoading(true);
   setStatus(`Searching GitHub for "${username}"...`);
 
-  // Both requests start now and run in parallel; allSettled never rejects
-  const [userOutcome, reposOutcome] = await Promise.allSettled([
-    getUser(username),
-    getRepos(username),
-  ]);
+  try {
+    // Both requests start now and run in parallel; allSettled never rejects
+    const [userOutcome, reposOutcome] = await Promise.allSettled([
+      getUser(username),
+      getRepos(username),
+    ]);
 
-  if (userOutcome.status === "rejected") {
-    setStatus(userOutcome.reason.message);
-    return;
+    if (userOutcome.status === "rejected") {
+      setStatus(userOutcome.reason.message);
+      return;
+    }
+
+    const user = userOutcome.value;
+    renderProfile(user);
+    setStatus(`Showing profile for ${user.login}`);
+
+    if (reposOutcome.status === "rejected") {
+      showRepositoriesMessage(reposOutcome.reason.message);
+      return;
+    }
+
+    allRepos = reposOutcome.value;
+    publicRepoCount = user.public_repos;
+    resetRepositoryControls();
+    refreshRepositories(readRepositoryControls());
+  } finally {
+    // Runs on every exit path: success, error message, early return, or exception
+    setLoading(false);
   }
+}
 
-  const user = userOutcome.value;
-  renderProfile(user);
-  setStatus(`Showing profile for ${user.login}`);
-
-  if (reposOutcome.status === "rejected") {
-    showRepositoriesMessage(reposOutcome.reason.message);
-    return;
-  }
-
-  allRepos = reposOutcome.value;
-  publicRepoCount = user.public_repos;
-  resetRepositoryControls();
-  refreshRepositories(readRepositoryControls());
-});
+onSearchSubmit(handleSearch);
