@@ -144,3 +144,24 @@ export function sumStars(repos) {
 export function getRepositoriesSummary(visibleCount, totalCount, stars) {
   return `${formatNumber(visibleCount)} of ${formatNumber(totalCount)} repositories · ${formatNumber(stars)} stars`;
 }
+
+/**
+ * Formats the x-ratelimit-reset header (Unix seconds) as a local time like "3:42 PM".
+ * Returns null when the value is missing or invalid.
+ * @param {string | null | undefined} resetSeconds
+ * @returns {string | null}
+ */
+export function formatResetTime(resetSeconds) {
+  if (!resetSeconds) {
+    return null;
+  }
+
+  // JavaScript dates use milliseconds, the header uses seconds
+  const date = new Date(Number(resetSeconds) * 1000);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
