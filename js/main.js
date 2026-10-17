@@ -16,6 +16,7 @@ import {
   renderProfile,
   renderRepositories,
   resetRepositoryControls,
+  setLoading,
   setStatus,
   showFieldError,
   showRepositoriesMessage,
@@ -48,14 +49,19 @@ function refreshRepositories({ query, sortKey }) {
 
 onRepositoryControlsChange(refreshRepositories);
 
+let latestSearchId = 0;   // number of the most recent search (shared by all calls)
+
 /**
  * Runs one search: validates the input, loads the data and renders it.
  * @param {string} rawValue - exactly what the user typed
  */
 async function handleSearch(rawValue) {
+  console.log("handleSearch called with:", rawValue);
+  const searchId = ++latestSearchId;   // 1. take the next number: this search's own id
   clearFieldError();
   setStatus("");
   hideResults();
+  setLoading(false);      // a new submit always starts from the idle state
   allRepos = [];
 
   const { isValid, username, error: validationError } = validateUsername(rawValue);
@@ -74,6 +80,10 @@ async function handleSearch(rawValue) {
       getUser(username),
       getRepos(username),
     ]);
+
+    if (latestSearchId !== searchId) {            // 2. another search started while we were waiting
+      return;
+    }
 
     if (userOutcome.status === "rejected") {
       setStatus(userOutcome.reason.message);
@@ -95,7 +105,9 @@ async function handleSearch(rawValue) {
     refreshRepositories(readRepositoryControls());
   } finally {
     // Runs on every exit path: success, error message, early return, or exception
-    setLoading(false);
+    if (latestSearchId === searchId) {            // 3. only the latest search may end the loading state
+      setLoading(false);
+    }
   }
 }
 
