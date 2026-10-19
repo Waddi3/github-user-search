@@ -92,19 +92,37 @@ export function setOptionalText(element, value) {
 }
 
 /**
+ * Sets the destination of a link, or removes it when the URL is missing.
+ * @param {HTMLAnchorElement} anchor
+ * @param {unknown} url
+ */
+function setLink(anchor, url) {
+  if (typeof url === "string") {
+    anchor.href = url;
+  } else {
+    anchor.removeAttribute("href");
+  }
+}
+
+/**
  * Fills the profile card with the data of one GitHub user and shows it.
  * @param {object} user - the object returned by getUser
  */
 export function renderProfile(user) {
-  const avatar = document.createElement("img");
-  avatar.src = user.avatar_url;
-  avatar.alt = `${user.login}'s avatar`;
-  elements.avatar.replaceChildren(avatar);
+  if (typeof user.avatar_url === "string") {
+    const avatar = document.createElement("img");
+    avatar.src = user.avatar_url;
+    avatar.alt = `${user.login}'s avatar`;
+    elements.avatar.replaceChildren(avatar);
+  } else {
+    elements.avatar.replaceChildren();
+  }
 
   elements.name.textContent = user.name || user.login;
   elements.link.textContent = `@${user.login}`;
-  elements.link.href = user.html_url;
-  setOptionalText(elements.bio, user.bio);
+  setLink(elements.link, user.html_url);
+  // elements.link.href = user.html_url;
+  // setOptionalText(elements.bio, user.bio);
 
   elements.followers.textContent = formatNumber(user.followers);
   elements.following.textContent = formatNumber(user.following);
@@ -148,7 +166,7 @@ function createRepositoryItem(repo) {
 
   const link = row.querySelector(".repo__name a");
   link.textContent = repo.name;
-  link.href = repo.html_url;
+  setLink(link, repo.html_url);
 
   setOptionalText(row.querySelector(".repo__description"), repo.description);
   setOptionalText(row.querySelector(".repo__language"), repo.language);
