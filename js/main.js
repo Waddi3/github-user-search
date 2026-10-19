@@ -22,6 +22,7 @@ import {
   showRepositoriesMessage,
 } from "./ui.js";
 import { getRepos, getUser } from "./api.js";
+import { ApiError, getErrorMessage } from "./errors.js";
 
 console.log(`${APP_NAME}: main.js loaded`);
 
@@ -50,6 +51,20 @@ function refreshRepositories({ query, sortKey }) {
 onRepositoryControlsChange(refreshRepositories);
 
 let latestSearchId = 0;   // number of the most recent search (shared by all calls)
+
+/**
+ * Returns the message to show for a failure, and logs the ones that are our own bugs.
+ * @param {unknown} error
+ * @returns {string}
+ */
+function describeFailure(error) {
+  if (!(error instanceof ApiError)) {
+    // Unexpected: keep the details for us, show something generic to the user
+    console.error(error);
+  }
+
+  return getErrorMessage(error);
+}
 
 /**
  * Runs one search: validates the input, loads the data and renders it.
@@ -86,7 +101,7 @@ async function handleSearch(rawValue) {
     }
 
     if (userOutcome.status === "rejected") {
-      setStatus(userOutcome.reason.message);
+      setStatus(describeFailure(userOutcome.reason));
       return;
     }
 
@@ -95,7 +110,7 @@ async function handleSearch(rawValue) {
     setStatus(`Showing profile for ${user.login}`);
 
     if (reposOutcome.status === "rejected") {
-      showRepositoriesMessage(reposOutcome.reason.message);
+      showRepositoriesMessage(describeFailure(reposOutcome.reason));
       return;
     }
 
@@ -103,6 +118,13 @@ async function handleSearch(rawValue) {
     publicRepoCount = user.public_repos;
     resetRepositoryControls();
     refreshRepositories(readRepositoryControls());
+
+    } catch (error) {
+    // Something unexpected threw inside our own code
+    if (latestSearchId === searchId) {
+      setStatus(describeFailure(error));
+    }
+
   } finally {
     // Runs on every exit path: success, error message, early return, or exception
     if (latestSearchId === searchId) {            // 3. only the latest search may end the loading state
