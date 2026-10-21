@@ -1,7 +1,7 @@
 import {
-  APP_NAME,
+  //APP_NAME,
   validateUsername,
-} from "./utils.js";
+} from "./validation.js";
 import {
   filterRepositories,
   getRepositoriesNote,
