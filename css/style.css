@@ -338,7 +338,7 @@ main>*+* {
 /* Tablet and up: avatar on the left, everything else in the right column */
 @media (min-width: 40rem) {
     .profile {
-        grid-template-columns: 8rem 1fr;
+        grid-template-columns: 8rem minmax(0, 1fr);
         column-gap: var(--space-6);
     }
 
@@ -350,6 +350,16 @@ main>*+* {
     .profile__meta {
         grid-column: 2;
     }
+}
+
+/* Long unbroken text (URLs, long names) must wrap instead of widening the layout */
+.profile__bio,
+.profile__meta li,
+.repo__description,
+.repo__meta li,
+.repositories__note,
+.field-error {
+    overflow-wrap: anywhere;
 }
 
 /* ==========================================================================
