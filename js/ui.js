@@ -1,5 +1,6 @@
 // UI layer: the only module that touches the DOM.
-import { formatDate, formatNumber, SORT_OPTIONS, toSafeWebsiteUrl } from "./utils.js";
+import { SORT_OPTIONS, toSafeWebsiteUrl } from "./utils.js";
+import { formatDate, formatNumber } from "./format.js";
 /**
  * Finds an element by id, or fails immediately with a clear message.
  * @param {string} id

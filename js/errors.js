@@ -1,5 +1,5 @@
 // Error types: the API layer throws them, the UI layer turns them into messages.
-import { formatResetTime } from "./utils.js";
+import { formatResetTime } from "./format.js";
 
 /**
  * An error raised while talking to the GitHub API.
