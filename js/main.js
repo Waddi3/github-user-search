@@ -1,12 +1,14 @@
 import {
   APP_NAME,
+  validateUsername,
+} from "./utils.js";
+import {
   filterRepositories,
   getRepositoriesNote,
   getRepositoriesSummary,
   sortRepositories,
   sumStars,
-  validateUsername,
-} from "./utils.js";
+} from "./repositories.js";
 import {
   clearFieldError,
   hideResults,
