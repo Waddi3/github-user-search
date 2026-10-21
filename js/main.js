@@ -1,5 +1,4 @@
 import {
-  //APP_NAME,
   validateUsername,
 } from "./validation.js";
 import {
@@ -25,8 +24,6 @@ import {
 } from "./ui.js";
 import { getRepos, getUser } from "./api.js";
 import { ApiError, getErrorMessage } from "./errors.js";
-
-console.log(`${APP_NAME}: main.js loaded`);
 
 // State: the data behind the repository list
 let allRepos = [];
