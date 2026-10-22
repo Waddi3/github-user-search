@@ -96,11 +96,13 @@ export function setOptionalText(element, value) {
  * @param {HTMLAnchorElement} anchor
  * @param {unknown} url
  */
-function setLink(anchor, url) {
+function setExternalLink(anchor, url) {
   if (typeof url === "string") {
     anchor.href = url;
+    anchor.setAttribute("aria-label", `${anchor.textContent} (opens in a new tab)`);
   } else {
     anchor.removeAttribute("href");
+    anchor.removeAttribute("aria-label");
   }
 }
 
@@ -120,7 +122,7 @@ export function renderProfile(user) {
 
   elements.name.textContent = user.name || user.login;
   elements.link.textContent = `@${user.login}`;
-  setLink(elements.link, user.html_url);
+  setExternalLink(elements.link, user.html_url);
   // elements.link.href = user.html_url;
   // setOptionalText(elements.bio, user.bio);
 
@@ -134,8 +136,8 @@ export function renderProfile(user) {
   const websiteUrl = toSafeWebsiteUrl(user.blog);
   const websiteLink = elements.website.querySelector("a");
   if (websiteUrl) {
-    websiteLink.href = websiteUrl;
     websiteLink.textContent = websiteUrl;
+    setExternalLink(websiteLink, websiteUrl);
     elements.website.hidden = false;
   } else {
     elements.website.hidden = true;
@@ -166,7 +168,7 @@ function createRepositoryItem(repo) {
 
   const link = row.querySelector(".repo__name a");
   link.textContent = repo.name;
-  setLink(link, repo.html_url);
+  setExternalLink(link, repo.html_url);
 
   setOptionalText(row.querySelector(".repo__description"), repo.description);
   setOptionalText(row.querySelector(".repo__language"), repo.language);
