@@ -64,7 +64,6 @@ export function setStatus(message) {
  */
 export function showFieldError(message) {
   elements.fieldError.textContent = message;
-  elements.fieldError.hidden = false;
   elements.input.setAttribute("aria-invalid", "true");
   elements.input.focus(); // move the cursor back to the field that needs fixing
 }
@@ -74,7 +73,6 @@ export function showFieldError(message) {
  */
 export function clearFieldError() {
   elements.fieldError.textContent = "";
-  elements.fieldError.hidden = true;
   elements.input.removeAttribute("aria-invalid");
 }
 

@@ -238,6 +238,11 @@ main>*+* {
     color: var(--color-accent);
 }
 
+.field-error:empty {
+    margin-top: 0;
+    /* the paragraph stays in the page, so it must not leave a gap while it is empty */
+}
+
 /* ==========================================================================
    6. Status line (loading and error messages)
    ========================================================================== */
