@@ -91,9 +91,7 @@ a {
     text-underline-offset: 0.2em;
 }
 
-a:hover {
-    color: var(--color-accent-hover);
-}
+
 
 :focus-visible {
     outline: 3px solid var(--color-accent);
@@ -194,9 +192,27 @@ main>*+* {
     cursor: pointer;
 }
 
-.search-form button:hover {
-    background: var(--color-accent-hover);
-    border-color: var(--color-accent-hover);
+
+/* Hover styles only for devices that can hover: on touch screens they would stay "stuck" after a tap */
+@media (hover: hover) {
+    a:hover {
+        color: var(--color-accent-hover);
+    }
+
+    .search-form button:hover {
+        background: var(--color-accent-hover);
+        border-color: var(--color-accent-hover);
+    }
+}
+
+/* Fingers are less precise than a mouse: give single-line links a bigger touch area */
+@media (pointer: coarse) {
+
+    .profile__login,
+    .repo__name a {
+        display: inline-block;
+        padding-block: var(--space-2);
+    }
 }
 
 .search-form button:active {
@@ -363,7 +379,7 @@ main>*+* {
 }
 
 /* ==========================================================================
-   8. Repositories section (list items are styled in Phase 9)
+   8. Repositories section 
    ========================================================================== */
 .repositories h2 {
     padding-bottom: var(--space-2);
