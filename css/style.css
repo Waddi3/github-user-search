@@ -318,7 +318,7 @@ main>*+* {
 /* Stats: columns are created automatically, no media query needed */
 .profile__stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
     border-block: var(--border);
 }
 
@@ -339,6 +339,8 @@ main>*+* {
     font-size: var(--text-xl);
     font-weight: 600;
     line-height: 1.2;
+    overflow-wrap: anywhere; /* a huge number wraps instead of overflowing its cell */
+        
 }
 
 .profile__meta {
@@ -369,12 +371,15 @@ main>*+* {
 }
 
 /* Long unbroken text (URLs, long names) must wrap instead of widening the layout */
+.profile__login,
 .profile__bio,
 .profile__meta li,
 .repo__description,
 .repo__meta li,
 .repositories__note,
-.field-error {
+.repositories__summary,
+.field-error,
+.status {
     overflow-wrap: anywhere;
 }
 
