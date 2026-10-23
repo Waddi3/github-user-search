@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tests</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 52rem;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            line-height: 1.5;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+            font-size: 0.875rem;
+            padding: 0.25rem 0;
+        }
+
+        .pass {
+            color: #1a6b2f;
+        }
+
+        .fail {
+            color: #b3261e;
+            font-weight: 700;
+        }
+
+        pre {
+            margin: 0.25rem 0 0.75rem;
+            white-space: pre-wrap;
+            font-weight: 400;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #16140f;
+                color: #ece6d8;
+            }
+
+            .pass {
+                color: #6fd28b;
+            }
+
+            .fail {
+                color: #ff8a80;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tests</h1>
+    <p id="summary" role="status">Running...</p>
+    <ul id="results"></ul>
+    <script type="module" src="./run-all.js"></script>
+</body>
+
+</html>
