@@ -2,6 +2,10 @@
 import { toSafeWebsiteUrl } from "./validation.js";
 import { formatDate, formatNumber } from "./format.js";
 import { SORT_OPTIONS } from "./repositories.js";
+
+// The title the page has when it loads (from index.html). It is restored when the results are hidden.
+const DEFAULT_TITLE = document.title;
+
 /**
  * Finds an element by id, or fails immediately with a clear message.
  * @param {string} id
@@ -115,6 +119,9 @@ export function renderProfile(user) {
     const avatar = document.createElement("img");
     avatar.src = user.avatar_url;
     avatar.alt = `${user.login}'s avatar`;
+    document.title = `${user.login} · ${DEFAULT_TITLE}`;
+    elements.profile.hidden = false;
+
     elements.avatar.replaceChildren(avatar);
   } else {
     elements.avatar.replaceChildren();
@@ -155,7 +162,7 @@ export function renderProfile(user) {
 export function hideResults() {
   elements.profile.hidden = true;
   elements.repositories.hidden = true;
-
+  document.title = DEFAULT_TITLE;
 }
  
 /**
