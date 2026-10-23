@@ -2,5 +2,6 @@
 // Then run() executes them all.
 import "./format.test.js";
 import { run } from "./runner.js";
+import "./validation.test.js";
 
 await run();
