@@ -41,5 +41,10 @@ export function toSafeWebsiteUrl(rawValue) {
     return null;
   }
 
+  // A real public website has a dot in its host (example.com) and no encoded characters
+  if (!url.hostname.includes(".") || url.hostname.includes("%")) {
+    return null;
+  }
+
   return url.href;
 }
