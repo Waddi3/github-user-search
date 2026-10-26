@@ -1,5 +1,6 @@
 import {
   filterRepositories,
+  getRepositoriesNote,
   getRepositoriesSummary,
   sortRepositories,
   sumStars,
@@ -83,3 +84,18 @@ test("sumStars treats missing star counts as 0", () => {
 test("getRepositoriesSummary describes what the list shows", () => {
   assertEqual(getRepositoriesSummary(3, 8, 1234), "3 of 8 repositories · 1,234 stars");
 });
+
+// getRepositoriesNote
+const noteCases = [
+  [0, 0, "This user has no public repositories."],
+  [8, 8, null],
+  [100, 2500, "Showing 100 of 2,500 repositories."],
+  [8, undefined, null],
+  [30, 12, null],
+];
+
+for (const [shown, total, expected] of noteCases) {
+  test(`getRepositoriesNote(${shown}, ${total}) returns ${JSON.stringify(expected)}`, () => {
+    assertEqual(getRepositoriesNote(shown, total), expected);
+  });
+}
